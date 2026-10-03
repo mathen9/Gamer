@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A0D16"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<title>Game Command Center</title>
+<style>
+:root{--bg:#0A0D16;--card:#121826;--hd:#00E5FF;--mg:#FF2BD6;--in:#1F2A44;--tx:#E8EEFA;--mu:#8C97B3;--ok:#39FF88;--bd:#2A3556;--wa:#FFC83D;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box}
+body{margin:0;height:100%;display:flex;flex-direction:column;background:var(--bg);color:var(--tx);font:15px Calibri,Carlito,system-ui,sans-serif}
+header{padding:12px 16px;background:var(--card);border-bottom:2px solid var(--hd);box-shadow:0 2px 14px #00e5ff44;font-weight:700;font-size:18px;color:var(--hd);letter-spacing:.5px}
+main{flex:1;overflow-y:auto;padding:12px;max-width:760px;width:100%;margin:0 auto}
+nav{display:flex;overflow-x:auto;background:var(--card);border-top:1px solid var(--bd)}
+nav button{flex:1 0 auto;min-width:56px;background:none;border:0;color:var(--mu);padding:10px 4px;font:inherit;font-size:10px}
+nav button.a{color:var(--hd);border-top:2px solid var(--mg);font-weight:700}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:12px}
+h2,h3{margin:0 0 8px}h3{font-size:13px;color:var(--hd);text-transform:uppercase;letter-spacing:.5px}h2{font-size:20px;color:var(--mg)}
+small{color:var(--mu)}summary{cursor:pointer}
+.b{height:10px;background:var(--bg);border:1px solid var(--bd);border-radius:6px;overflow:hidden;margin:6px 0}.b i{display:block;height:100%;background:var(--hd)}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd)}.kv:last-child{border:0}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:8px}.xp{font-size:22px;color:var(--ok)}
+input,select,textarea{background:var(--in);color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:8px;font:inherit;width:100%;margin:3px 0}
+.r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.r>*{flex:1;min-width:110px}
+button.p{background:var(--hd);color:#0A0D16;font-weight:700;border:0;border-radius:6px;padding:9px 12px;font:inherit;margin:4px 4px 0 0}
+.lk{opacity:.5}.msg{color:var(--wa)}
+</style></head><body>
+<header>🎮 GAME COMMAND CENTER</header><main id="v"></main>
+<nav><button data-t="p" onclick="go('p')">🏠<br>Painel</button><button data-t="b" onclick="go('b')">📚<br>Biblioteca</button><button data-t="l" onclick="go('l')">🎯<br>Backlog</button><button data-t="t" onclick="go('t')">🏆<br>Top</button><button data-t="c" onclick="go('c')">💕<br>Casal</button><button data-t="q" onclick="go('q')">🏅<br>Conquistas</button><button data-t="x" onclick="go('x')">⚙️<br>Perfil</button></nav>
+<script>
+const pad=n=>String(n).padStart(2,"0"),T=()=>{const x=new Date();return x.getFullYear()+"-"+pad(x.getMonth()+1)+"-"+pad(x.getDate())};
+const esc=x=>String(x==null?"":x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let S;try{S=JSON.parse(localStorage.getItem("gcc1"))}catch(e){}
+S=S||{nome:"",gm:{},gx:{w:10,y:8,r:2}};
+const sv=()=>{try{localStorage.setItem("gcc1",JSON.stringify(S))}catch(e){}};
+const lv=(x,L)=>{let i=0;L.forEach((v,j)=>{if(x>=v)i=j});return i};
+const pg=(x,L)=>{const i=lv(x,L);return i>=L.length-1?100:(x-L[i])/(L[i+1]-L[i])*100};
+const bar=(p,c)=>`<div class=b><i style="width:${Math.max(0,Math.min(100,p))}%;${c?"background:"+c:""}"></i></div>`;
+const card=(t,b)=>`<section class=c>${t?`<h3>${t}</h3>`:""}${b}</section>`;
+const kv=(a,b)=>`<div class=kv><span>${a}</span><b>${b}</b></div>`;
+const GD=[["Far Cry Primal","Ação e Aventura","Mundo Aberto",15,30,"C",0],["Lies of P","RPG","Soulslike",30,50,"A",0],["DREDGE","Ação e Aventura","Narrativa",12,25,"C",0],["Warhammer 40,000 Space Marine 2","Ação e Aventura","Tiro",11,30,"M",0],["Batman Arkham Origins","Ação e Aventura","Stealth",15,30,"M",0],["Outer Wilds","Ação e Aventura","Narrativa",16,30,"A",0],["Resident Evil 4 Remake","Terror","Ação",16,35,"M",0],["Stray Gods","Narrativa","RPG Musical",6,12,"C",0],["The Witcher 3","RPG","Mundo Aberto",52,175,"A",0],["Devil May Cry 5","Ação e Aventura","Hack and Slash",10,25,"A",0],["Red Dead Redemption 2","Ação e Aventura","Mundo Aberto",52,180,"M",0],["Marvel's Guardians of the Galaxy","Ação e Aventura","Narrativa",18,25,"C",0],["Assassin's Creed Origins","RPG","Mundo Aberto",40,100,"M",0],["Elden Ring","RPG","Soulslike",60,135,"E",0],["Elden Ring Shadow of the Erdtree","RPG","Soulslike",25,45,"E",0],["Thymesia","RPG","Soulslike",10,20,"A",0],["V Rising","RPG","Sobrevivência",40,100,"A",3],["Sacred 3","RPG","Hack and Slash",9,20,"C",0],["RuneScape Dragonwilds","RPG","Sobrevivência",40,100,"M",0],["Enshrouded","RPG","Sobrevivência",40,100,"M",3],["Core Keeper","RPG","Sobrevivência",30,80,"M",0],["Marvel's Spider-Man 2","Ação e Aventura","Mundo Aberto",17,35,"C",0],["Castlevania Lords of Shadow 2","Ação e Aventura","Hack and Slash",13,25,"M",0],["Road Redemption","Ação e Aventura","Corrida",8,25,"M",0],["Call of Duty Modern Warfare","FPS e Tiro","Ação",6,15,"C",0],["Left 4 Dead","FPS e Tiro","Cooperativo",7,15,"C",1],["FEAR 3","FPS e Tiro","Terror",6,15,"C",0],["Abiotic Factor","FPS e Tiro","Sobrevivência",30,70,"A",0],["Aliens Fireteam Elite","FPS e Tiro","Cooperativo",8,20,"M",3],["Resident Evil 5","Terror","Ação",10,25,"M",0],["Alien Isolation","Terror","Stealth",17,25,"A",0],["Amnesia The Dark Descent","Terror","Aventura",7,12,"M",0],["Phasmophobia","Terror","Cooperativo",30,100,"A",2],["Demonologist","Terror","Cooperativo",20,60,"A",2],["Paranoia Place","Terror","Indie",3,6,"C",0],["Fear Therapy","Terror","Indie",3,6,"C",0],["Grounded","Sobrevivência","Cooperativo",25,60,"M",2],["Sons of the Forest","Sobrevivência","Terror",20,40,"M",3],["7 Days to Die","Sobrevivência","Mundo Aberto",40,150,"E",0],["Microsoft Flight Simulator","Simulação","Aviação",100,300,"E",0],["Need For Speed Underground 2","Corrida","Mundo Aberto",15,30,"M",0],["Castle Crashers","Cooperativo","Beat 'em up",8,25,"C",1],["RV There Yet","Cooperativo","Casual",6,12,"C",1]];
+const GST=["Na fila","Jogando","Concluído","100% Completo","Pausado","Abandonado","Armazenado","Compactado","Aguardando instalação"],GPR=["Crítica","Alta","Média","Baixa"],GPL=["PC","PlayStation","Xbox","Steam Deck","Switch","Outro"],GCX={C:"Casual",M:"Moderada",A:"Alta",E:"Extrema"};
+const GLV=[0,300,800,1500,2500,3500],GLT=["Recruta","Explorador","Caçador","Veterano","Elite","Lendário"];
+const ACG=[["⚔️ Primeira Vitória","Conclua 1 jogo",100,s=>s.dn,1],["🔥 Maratonista","Conclua 5 jogos",200,s=>s.dn,5],["🛡️ Veterano de Guerra","Conclua 10 jogos",300,s=>s.dn,10],["👑 Lenda da Biblioteca","Conclua 20 jogos",500,s=>s.dn,20],["💎 Platinador","Complete 1 jogo a 100%",250,s=>s.pl,1],["🌑 Maculado","Conclua Elden Ring",300,s=>s.ct("Elden Ring"),1],["🐺 Lobo Branco","Conclua The Witcher 3",250,s=>s.ct("The Witcher 3"),1],["🤠 Fora-da-Lei","Conclua Red Dead Redemption 2",250,s=>s.ct("Red Dead Redemption 2"),1],["🧟 Agente Especial","Conclua Resident Evil 4 Remake",150,s=>s.ct("Resident Evil 4 Remake"),1],["🚀 Guardião da Galáxia","Conclua Guardians of the Galaxy",150,s=>s.ct("Marvel's Guardians of the Galaxy"),1],["🌌 Explorador do Cosmos","Conclua Outer Wilds",200,s=>s.ct("Outer Wilds"),1],["💕 Casal Gamer","Conclua 3 jogos do casal",200,s=>s.cz,3],["🤝 Dupla Dinâmica","Conclua a Fase 1 do casal",150,s=>s.c1,3],["📝 Crítico de Games","Dê nota a 10 jogos",150,s=>s.nt,10],["⭐ Padrão Ouro","5 jogos com nota 9+",200,s=>s.n9,5],["⏱️ Cem Horas","100 horas jogadas",150,s=>s.hj,100],["🕹️ Quinhentas Horas","500 horas jogadas",300,s=>s.hj,500],["📋 Biblioteca Zerada","Conclua TODOS os jogos",500,s=>s.dn,43]];
+S.gm=S.gm||{};S.gx=S.gx||{w:10,y:8,r:2};
+let gv="p",gopen=-1,gq="",gf="";
+const gg=i=>(S.gm=S.gm||{})[GD[i][0]]||(S.gm[GD[i][0]]={st:"Na fila",pr:"Média",pl:"PC",nt:"",pg:0,hj:0,di:"",dc:""});
+const isDn=i=>["Concluído","100% Completo"].includes(gg(i).st);
+const gall=()=>GD.map((_,i)=>i);
+function gS(i,f,v){const g=gg(i);g[f]=v;if(f==="st"){const t=T();if(v==="Jogando"&&!g.di)g.di=t;if(isDn(i)){if(!g.dc)g.dc=t;g.pg=100}}sv();R()}
+function gs(){const ix=gall(),dn=ix.filter(isDn),rt=ix.filter(i=>gg(i).nt!==""),yr=String(new Date().getFullYear());
+ return{dn:dn.length,pl:ix.filter(i=>gg(i).st==="100% Completo").length,hj:ix.reduce((a,i)=>a+(+gg(i).hj||0),0),nt:rt.length,n9:rt.filter(i=>+gg(i).nt>=9).length,cz:ix.filter(i=>GD[i][6]&&isDn(i)).length,c1:ix.filter(i=>GD[i][6]==1&&isDn(i)).length,tot:GD.length,yr:dn.filter(i=>(gg(i).dc||"").slice(0,4)===yr).length,play:ix.filter(i=>gg(i).st==="Jogando"),rt,ct:n=>{const i=GD.findIndex(x=>x[0]===n);return i>=0&&isDn(i)?1:0}}}
+function gxp(s){const x=ACG.reduce((a,c)=>a+(c[3](s)>=c[4]?c[2]:0),0);return{xp:x,l:lv(x,GLV),p:pg(x,GLV)}}
+function gbl(){return gall().filter(i=>!isDn(i)&&!["Abandonado","Jogando"].includes(gg(i).st)).sort((a,b)=>GPR.indexOf(gg(a).pr)-GPR.indexOf(gg(b).pr)||a-b)}
+const gsel=(i,f,L)=>`<select onchange="gS(${i},'${f}',this.value)">${L.map(x=>`<option ${gg(i)[f]===x?"selected":""}>${x}</option>`).join("")}</select>`;
+function gI(i){const d=GD[i],g=gg(i),ni=(f,l,a)=>`<label>${l}<input type=number ${a} value="${g[f]}" onchange="gS(${i},'${f}',this.value)"></label>`;
+ return `<details class=c ${gopen===i?"open":""} ontoggle="gopen=this.open?${i}:(gopen==${i}?-1:gopen)"><summary><b>${esc(d[0])}</b> <small>· ${g.st}${g.nt!==""?" · ⭐"+g.nt:""}${d[6]?" · 💕":""}</small></summary><small>${d[1]} · ${d[2]} · ${d[3]}h campanha / ${d[4]}h 100% · ${GCX[d[5]]}${d[6]?" · casal fase "+d[6]:""}</small>${bar(+g.pg)}<div class=r><label>Status${gsel(i,"st",GST)}</label><label>Prioridade${gsel(i,"pr",GPR)}</label><label>Plataforma${gsel(i,"pl",GPL)}</label></div><div class=r>${ni("nt","Nota (0-10)","min=0 max=10 step=.5")}${ni("pg","Progresso %","min=0 max=100")}${ni("hj","Horas jogadas","min=0")}</div><div class=r><label>Início<input type=date value="${g.di}" onchange="gS(${i},'di',this.value)"></label><label>Conclusão<input type=date value="${g.dc}" onchange="gS(${i},'dc',this.value)"></label></div><label>📝 Anotações de campanha<textarea rows=3 onchange="gS(${i},'ob',this.value)">${esc(g.ob)}</textarea></label></details>`}
+function gP(){const s=gs(),L=gxp(s),n=s.tot,bl=gbl(),gen={};GD.forEach(x=>gen[x[1]]=(gen[x[1]]||0)+1);
+ const nm=s.rt.length?(s.rt.reduce((a,i)=>a+ +gg(i).nt,0)/s.rt.length).toFixed(1):"—",mg=Math.max(...Object.values(gen));
+ return card("",`<div class=hero><div><small>🎮 ${esc(S.nome)||"Game Command Center"}</small><h2>${GLT[L.l]}</h2></div><b class=xp>${L.xp} XP</b></div>${bar(L.p)}`)
+ +card("Visão geral",kv("📚 Jogos",n)+kv("✅ Concluídos",s.dn)+kv("▶ Jogando",s.play.length)+kv("🎯 Na fila",bl.length+" · ≈ "+bl.reduce((a,i)=>a+GD[i][3],0)+" h")+kv("⏱️ Horas jogadas",s.hj)+kv("⭐ Nota média",nm))
+ +card("🎯 Progresso",kv("Biblioteca concluída",s.dn+" / "+n)+bar(s.dn/n*100,"var(--ok)")+kv("Jogos do casal",s.cz+" / 10")+bar(s.cz/10*100,"#ff5c8a")+kv("Meta do ano",s.yr+" / "+S.gx.y)+bar(s.yr/S.gx.y*100,"var(--wa)")+`<label>Meta anual de jogos concluídos<input type=number value="${S.gx.y}" onchange="S.gx.y=+this.value||1;sv();R()"></label>`)
+ +card("▶ Jogando agora",s.play.map(i=>kv(esc(GD[i][0]),(+gg(i).pg||0)+"%")).join("")||"<small>Nenhum — escolha um no backlog.</small>")
+ +card("⏭ Próximos do backlog",bl.slice(0,5).map(i=>kv(esc(GD[i][0]),gg(i).pr)).join("")||"<small>Backlog vazio!</small>")
+ +card("🎭 Jogos por gênero",Object.keys(gen).map(k=>kv(k,gen[k])+bar(gen[k]/mg*100)).join(""))}
+function gB(){const q=gq.toLowerCase(),ix=gall().filter(i=>(!gf||gg(i).st===gf)&&(!q||(GD[i][0]+GD[i][1]+GD[i][2]).toLowerCase().includes(q)));
+ return card("",`<input placeholder="🔍 Buscar jogo ou gênero" value="${esc(gq)}" onchange="gq=this.value;R()"><select onchange="gf=this.value;R()"><option value="">Todos os status</option>${GST.map(x=>`<option ${gf===x?"selected":""}>${x}</option>`).join("")}</select><small>${ix.length} jogo(s). Toque em um jogo para editar.</small>`)+ix.map(gI).join("")}
+function gL(){const b=gbl(),h=b.reduce((a,i)=>a+GD[i][3],0);
+ return card("",kv("⏳ Jogos na fila",b.length)+kv("Horas de campanha",h+" h")+kv("Previsão","≈ "+Math.ceil(h/(S.gx.w||10))+" semanas")+`<label>Horas de jogo por semana<input type=number value="${S.gx.w}" onchange="S.gx.w=+this.value||1;sv();R()"></label>`)
+ +card("Ordem sugerida (prioridade, depois ordem da biblioteca)",b.map((i,k)=>`<div class=kv><span>${k+1}. ${esc(GD[i][0])}<br><small>${gg(i).pr} · ${GD[i][1]} · ${GCX[GD[i][5]]}</small></span><b>${GD[i][3]}h</b></div>`).join("")||"<small>Backlog vazio!</small>")}
+function gT(){const s=gs(),rk=s.rt.slice().sort((a,b)=>+gg(b).nt-+gg(a).nt||a-b),m=["🥇","🥈","🥉"],hall=gall().filter(isDn).sort((a,b)=>(+gg(b).nt||0)-(+gg(a).nt||0)||a-b);
+ return card("🏆 TOP 10 pessoal",rk.slice(0,10).map((i,k)=>kv((m[k]||"#"+(k+1))+" "+esc(GD[i][0]),"⭐ "+gg(i).nt)).join("")||"<small>Dê notas aos jogos (aba Biblioteca) para montar o ranking.</small>")
+ +(rk.length>10?card("📊 Ranking completo (11º em diante)",rk.slice(10).map((i,k)=>kv("#"+(k+11)+" "+esc(GD[i][0]),"⭐ "+gg(i).nt)).join("")):"")
+ +card("🏛️ Hall da Fama",hall.map(i=>kv((gg(i).st==="100% Completo"?"💎":"🏆")+" "+esc(GD[i][0]),(gg(i).nt!==""?"⭐ "+gg(i).nt:"—")+(gg(i).dc?" · "+gg(i).dc.split("-").reverse().join("/"):""))).join("")||"<small>Vazio — conclua seu primeiro jogo para entrar para a história!</small>")}
+function gC(){const s=gs();return card("",`<h2>💕 ${s.cz} de 10 concluídos</h2>`+bar(s.cz/10*100,"#ff5c8a"))
+ +[["FASE 1 — INICIANTE",1],["FASE 2 — INTERMEDIÁRIO",2],["FASE 3 — AVANÇADO",3]].map(f=>card(f[0],gall().filter(i=>GD[i][6]===f[1]).map(i=>`<div class=kv><span>${esc(GD[i][0])}<br><small>${GD[i][3]}h · ${GCX[GD[i][5]]}</small></span><span style="width:55%">${gsel(i,"st",GST)}</span></div>${bar(+gg(i).pg,"#ff5c8a")}`).join(""))).join("")}
+function gQ(){const s=gs(),L=gxp(s);
+ return card("",`<div class=hero><h2>${GLT[L.l]}</h2><b class=xp>${L.xp} XP</b></div>`+bar(L.p)+`<small>${L.l>=5?"Nível máximo":"Próximo: "+GLT[L.l+1]+" com "+GLV[L.l+1]+" XP"}</small>`)
+ +card("🏅 Conquistas ("+ACG.filter(a=>a[3](s)>=a[4]).length+"/"+ACG.length+")",ACG.map(a=>{const v=Math.min(a[3](s),a[4]),o=v>=a[4];return `<div class="${o?"":"lk"}"><div class=kv><span>${o?"🔓":"🔒"} ${a[0]}<br><small>${a[1]} · +${a[2]} XP</small></span><b>${Math.round(v)}/${a[4]}</b></div>${bar(v/a[4]*100,o?"var(--ok)":"")}</div>`}).join(""))}
+
+const ser=d=>{if(!d)return"";const a=d.split("-");return Math.round(Date.UTC(+a[0],+a[1]-1,+a[2])/864e5)+25569};
+const cl=x=>String(x==null?"":x).replace(/[\t\r\n]+/g," ").replace(/"/g,"'").trim().replace(/^([=+\-@])/,"'$1");
+function buildSheet(){const h=["Jogo","Status","Prioridade","Plataforma","Nota10","Inicio","Conclusao","Progresso","Horas","Obs","Jogador","MetaAno"];
+ const rows=GD.map((d,i)=>{const g=gg(i),r=[d[0],g.st,g.pr,g.pl,g.nt===""||g.nt==null?"":Math.round(+g.nt*10),ser(g.di),ser(g.dc),Math.round(+g.pg||0),Math.round(+g.hj||0),cl(g.ob)];
+  if(i===0)r.push(cl(S.nome),S.gx.y||"");return r.join("\t")});
+ return[h.join("\t")].concat(rows,["FIM"]).join("\n")}
+function cpSheet(){const t=buildSheet(),box=document.getElementById("xbox"),ok=()=>{document.getElementById("xmsg").textContent="✅ Copiado! Abra a planilha, aba ImportarJogos, clique em A1 e cole (Ctrl+V)."};
+ box.value=t;box.style.display="block";
+ const fb=()=>{box.select();try{document.execCommand("copy");ok()}catch(e){document.getElementById("xmsg").textContent="Selecione o texto abaixo e copie manualmente."}};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb()}
+function vX(){return card("👤 Perfil",`<input placeholder="Seu nome / gamertag" value="${esc(S.nome)}" onchange="S.nome=this.value;sv();R()">`)
+ +card("📋 Copiar para a planilha",`<small>Uma vez por semana: toque no botão, abra a planilha (aba <b>ImportarJogos</b>), clique na célula A1 e cole. A planilha toda se atualiza.</small><br><button class=p id=bcp onclick="cpSheet()">📋 Copiar para a planilha</button><div id=xmsg class=msg></div><textarea id=xbox rows=5 readonly style="display:none"></textarea>`)
+ +card("💾 Backup (seus dados ficam só neste navegador)",`<textarea id=bkp rows=4 placeholder="Cole aqui um backup para restaurar"></textarea><button class=p onclick="document.getElementById('bkp').value=JSON.stringify(S)">📤 Gerar backup</button><button class=p onclick="try{S=JSON.parse(document.getElementById('bkp').value);sv();R()}catch(e){alert('Backup inválido')}">📥 Restaurar</button><br><small>Para trazer os jogos que você marcou no app de hábitos, cole aqui o backup gerado lá.</small>`)}
+function go(k){gv=k;R();document.getElementById("v").scrollTop=0}
+function R(){S.gx=S.gx||{w:10,y:8,r:2};document.getElementById("v").innerHTML=({p:gP,b:gB,l:gL,t:gT,c:gC,q:gQ,x:vX})[gv]();document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("a",b.dataset.t==gv))}
+R();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script></body></html>

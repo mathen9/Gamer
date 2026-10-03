@@ -1,0 +1,14 @@
+GAME COMMAND CENTER — SITE / PWA
+
+Arquivos: index.html, manifest.json, sw.js, icon-192.png, icon-512.png (mantenha todos na mesma pasta).
+
+Publicar (precisa de https):
+A) Netlify Drop: app.netlify.com/drop e arraste esta pasta inteira.
+B) GitHub Pages: crie um repositório, envie os 5 arquivos e ative Settings > Pages.
+
+Instalar no celular:
+- Android (Chrome): menu > "Instalar app".
+- iPhone (Safari): Compartilhar > "Adicionar à Tela de Início".
+
+Seus dados ficam salvos no aparelho (não sincronizam). Use Perfil > "Gerar backup" de vez em quando.
+Para atualizar o site depois: troque os arquivos e aumente a versão em sw.js (const C="gcc-v1" -> "gcc-v2").
